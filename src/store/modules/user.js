@@ -1,12 +1,30 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import {
+  login,
+  api,
+  logout,
+  getInfo
+} from '@/api/user'
+import {
+  getToken,
+  setToken,
+  removeToken
+} from '@/utils/auth'
+import {
+  resetRouter
+} from '@/router'
+import {
+  MessageBox,
+  Message
+} from 'element-ui'
+import Cookies from 'js-cookie'
 
+// 用户状态初始化
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    selShopPop: false
   }
 }
 
@@ -24,36 +42,101 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_SEL_SHOP_POP(state, val) {
+    state.selShopPop = val
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
+  login({
+    commit
+  }, loginDatas) {
+    const {
+      username,
+      password
+    } = loginDatas.loginForm
+    let {
+      vm
+    } = loginDatas;
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      vm.f_selShopPopLoading=true
+      login({
+        username: username.trim(),
+        psd: password,
+        factory_id: vm.shopsSelVal
+      }).then(response => {
+        vm.f_selShopPopLoading=false
+
+        const {
+          data
+        } = response
+        // data.status = 2
+        if (response.code == 9999) {
+          if (data.status == 1) {
+            // commit('SET_NAME', 'test')
+            // commit('SET_SEL_SHOP_POP', false)
+            commit('SET_TOKEN', data.response.token)
+            setToken(data.response.token)
+            Cookies.set('eshop-426-admin_userinfo', data.response)
+            Message({
+              message: response.info,
+              type: 'success',
+              duration: 1.5 * 1000,
+              onClose() {
+                vm.$router.push({
+                  path: vm.redirect || '/'
+                })
+              }
+            })
+          } else if (data.status == 2) {
+            commit('SET_SEL_SHOP_POP', true)
+            // api({
+            //   "apiName": "switch_factory_list|factory"
+            // }).then((res) => {
+            //   vm.shops = res.data.list
+            // })
+            vm.shops = data.response
+          }
+        } else {
+          Message({
+            message: response.info,
+            type: 'error',
+            duration: 1.5 * 1000,
+            onClose() {
+
+            }
+          })
+        }
+
         resolve()
       }).catch(error => {
+        vm.f_selShopPopLoading=false
         reject(error)
       })
     })
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({
+    commit,
+    state
+  }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response
+        const {
+          data
+        } = response
 
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const {
+          name,
+          avatar
+        } = data
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
@@ -65,7 +148,10 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({
+    commit,
+    state
+  }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
@@ -79,7 +165,9 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken({
+    commit
+  }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
@@ -94,4 +182,3 @@ export default {
   mutations,
   actions
 }
-

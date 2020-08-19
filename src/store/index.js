@@ -7,6 +7,7 @@ import user from './modules/user'
 
 Vue.use(Vuex)
 
+// 提供获取其他模块store的索引
 const store = new Vuex.Store({
   modules: {
     app,

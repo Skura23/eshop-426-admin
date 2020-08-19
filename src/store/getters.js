@@ -1,3 +1,5 @@
+// getters可以认为是 store 的计算属性
+
 const getters = {
   sidebar: state => state.app.sidebar,
   device: state => state.app.device,
