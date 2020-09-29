@@ -550,6 +550,7 @@
                           style="width:200px;"
                           v-model.number="batchValue"
                           placeholder="输入要设置的数量"
+type="number"
                         ></el-input>
                         <el-button
                           type="primary"

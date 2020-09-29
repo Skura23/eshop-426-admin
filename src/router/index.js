@@ -457,13 +457,23 @@ export const constantRoutes = [{
     },
     alwaysShow: true,
     children: [{
-      path: 'classlist',
-      name: 'classlist',
-      component: () => import('@/views/case-manage/classlist'),
-      meta: {
-        title: '案例分类'
-      }
-    }]
+        path: 'classlist',
+        name: 'classlist',
+        component: () => import('@/views/case-manage/classlist'),
+        meta: {
+          title: '案例分类'
+        }
+      },
+      {
+        path: 'comment-check',
+        name: 'comment-check',
+        component: () => import('@/views/case-manage/comment-check'),
+        meta: {
+          title: '评论审核'
+        }
+      },
+
+    ]
   },
 
   // 开店申请

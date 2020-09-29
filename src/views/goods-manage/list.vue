@@ -154,7 +154,7 @@
             <el-button
               type="primary"
               size="mini"
-              @click="upDownShelf(row, 1)"
+              @click="upDownShelf(row, 2)"
             >
               上架
             </el-button>
@@ -423,6 +423,11 @@
             goods_id: row.goods_id,
             putaway
           }).then((res) => {
+            if (res.code==9999) {
+              this.$message(`商品${putaway==1?'上架':'下架'}成功`);
+            } else {
+              this.$message.error('操作失败');
+            }
             this.getList()
           })
         } else if (this.type === 'store') {
@@ -430,6 +435,11 @@
             goods_id: row.goods_id,
             putaway
           }).then((res) => {
+            if (res.code==9999) {
+              this.$message(`商品${putaway==1?'上架':'下架'}成功`);
+            } else {
+              this.$message.error('操作失败');
+            }
             this.getList()
           })
         }

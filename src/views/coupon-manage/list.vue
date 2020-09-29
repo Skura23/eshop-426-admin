@@ -258,7 +258,7 @@ add_time -->
           </div>
         </el-form-item>
         <el-form-item
-          label="优惠幅度"
+          :label="temp.discounts_type==1?'满减金额':'打折折扣'"
           prop="deduct"
         >
           <el-input
@@ -514,7 +514,7 @@ add_time -->
         return arr.join(',')
       },
       detailClass() {
-        let arr = ''
+        let arr = []
         this.temp.class && this.temp.class.forEach(elem => {
           arr.push(elem.class_name)
         });
@@ -539,6 +539,11 @@ add_time -->
           status,
           coupon_id: row.coupon_id
         }).then((res) => {
+          if (res.code==9999) {
+              this.$message(`商品${putaway==1?'上架':'下架'}成功`);
+            } else {
+              this.$message.error('操作失败');
+            }
           this.getList()
         })
       },

@@ -155,7 +155,7 @@
             >
               上架
             </el-button>
-            
+
             <el-button
               type="danger"
               size="mini"
@@ -382,6 +382,11 @@
           goods_id: row.goods_id,
           status
         }).then((res) => {
+          if (res.code == 9999) {
+            this.$message(`商品${putaway==1?'上架':'下架'}成功`);
+          } else {
+            this.$message.error('操作失败');
+          }
           this.getList()
         })
 

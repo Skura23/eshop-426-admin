@@ -7,7 +7,8 @@ import {
 import {
   getToken,
   setToken,
-  removeToken
+  removeToken,
+  removeUserinfo
 } from '@/utils/auth'
 import {
   resetRouter
@@ -61,13 +62,13 @@ const actions = {
       vm
     } = loginDatas;
     return new Promise((resolve, reject) => {
-      vm.f_selShopPopLoading=true
+      vm.f_selShopPopLoading = true
       login({
         username: username.trim(),
         psd: password,
         factory_id: vm.shopsSelVal
       }).then(response => {
-        vm.f_selShopPopLoading=false
+        vm.f_selShopPopLoading = false
 
         const {
           data
@@ -112,7 +113,7 @@ const actions = {
 
         resolve()
       }).catch(error => {
-        vm.f_selShopPopLoading=false
+        vm.f_selShopPopLoading = false
         reject(error)
       })
     })
@@ -153,14 +154,19 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      removeToken() // must remove  token  first
+      removeUserinfo()
+      resetRouter()
+      commit('RESET_STATE')
+      resolve()
+      // logout(state.token).then(() => {
+      //   removeToken() // must remove  token  first
+      //   resetRouter()
+      //   commit('RESET_STATE')
+      //   resolve()
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 

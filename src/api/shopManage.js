@@ -594,6 +594,10 @@ let apiList = [
   // 订单管理
   "order_list|order",
 
+  // 其他
+  "check_cases_comment_list|cases",
+  "check_update|cases",
+
 ]
 
 // 调用方法: api["class_create|integral"]

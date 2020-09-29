@@ -13,6 +13,11 @@ let toggleUpdownGoods = {
         goods_id,
         status
       }).then((res) => {
+        if (res.code==9999) {
+          this.$message(`商品${status==1?'上架':'下架'}成功`);
+        } else {
+          this.$message.error('操作失败');
+        }
         cb(res)
       })
     }

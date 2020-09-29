@@ -6,6 +6,7 @@
         v-model="listQuery[keywordsKey]"
         placeholder="输入关键字"
         style="width: 200px;"
+        v-if="hasKeyword"
         @keyup.enter.native="handleFilter"
       />
       &nbsp;
@@ -148,6 +149,10 @@
       },
       listLoading: {
         type: Boolean,
+      },
+      hasKeyword: {
+        type: Boolean,
+        default: true
       },
 
       // resdataMap: {
