@@ -82,6 +82,7 @@
             type="danger"
             size="small"
             @click="delGoods(row)"
+            v-if="row.status_type=='not_start'"
           >删除</el-button>
         </template>
       </TableList>
@@ -145,6 +146,9 @@
   import api from '@/api/shopManage'
   import cityData from '@/utils/city'
   import globals from '@/utils/globals'
+  import {
+    deleteLinePop
+  } from '@/utils'
 
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import Cookies from 'js-cookie'
@@ -301,11 +305,14 @@
         this.curId = row.seckill_id
       },
       delGoods(row) {
-        api.seckill_delete({
-          seckill_id: row.seckill_id
-        }).then((res) => {
+        deleteLinePop(row, 'seckill_delete', 'seckill_id', () => {
           this.searList()
         })
+        // api.seckill_delete({
+        //   seckill_id: row.seckill_id
+        // }).then((res) => {
+        //   this.searList()
+        // })
       },
     }
   }

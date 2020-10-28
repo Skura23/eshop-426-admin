@@ -31,7 +31,7 @@ import store from '@/store'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
+export const constantRouterMap = [{
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -58,23 +58,72 @@ export const constantRoutes = [{
     }]
   },
   {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
+
+]
+
+const createRouter = () => new Router({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({
+    y: 0
+  }),
+  routes: constantRouterMap
+})
+
+const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router
+
+
+//异步挂载的路由
+//动态需要根据权限加载的路由表 
+export const asyncRouterMap = [{
     path: '/shop-manage',
     component: Layout,
     redirect: '/shop-manage/shop-list',
     name: 'shop-manage',
     alwaysShow: true,
+    id: 1,
     meta: {
       title: '门店管理',
       icon: 'example'
     },
     children: [{
       path: 'shop-list',
+      id: 2,
       component: () => import('@/views/shop-manage/shop-list'),
       name: 'shop-list',
       meta: {
         title: '门店列表'
       }
-    }]
+    }, {
+      path: 'wechatshop-list',
+      id: 3,
+      component: () => import('@/views/shop-manage/wechatshop-list'),
+      name: 'wechatshop-list',
+      meta: {
+        title: '微信商户'
+      }
+    }, {
+      path: 'wechatshop-add',
+      component: () => import('@/views/shop-manage/wechatshop-add'),
+      name: 'wechatshop-add',
+      hidden: true,
+      id:38,
+      meta: {
+        title: '微信商户申请'
+      }
+    }],
+
   },
   {
     path: '/clients-manage',
@@ -82,11 +131,13 @@ export const constantRoutes = [{
     redirect: '/clients-manage/clients-list',
     name: 'clients-manage',
     alwaysShow: true,
+    id: 4,
     meta: {
       title: '客户管理',
       icon: 'nested'
     },
     children: [{
+      id: 5,
       path: 'clients-list',
       component: () => import('@/views/clients-manage/clients-list'),
       name: 'clients-list',
@@ -100,12 +151,14 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/staff-manage/staff-list',
     name: 'staff-manage',
+    id: 6,
     alwaysShow: true,
     meta: {
       title: '员工管理',
       icon: 'peoples'
     },
     children: [{
+        id: 7,
         path: 'staff-list',
         component: () => import('@/views/staff-manage/staff-list'),
         name: 'staff-list',
@@ -114,6 +167,7 @@ export const constantRoutes = [{
         }
       },
       {
+        id: 8,
         path: 'post-list',
         component: () => import('@/views/staff-manage/post-list'),
         name: 'post-list',
@@ -129,6 +183,7 @@ export const constantRoutes = [{
     redirect: '/goods-manage/selfrun-manage/list',
     name: 'goods-manage',
     alwaysShow: true,
+    id: 9,
     meta: {
       title: '商品管理',
       icon: 'shopping'
@@ -137,6 +192,7 @@ export const constantRoutes = [{
         path: 'selfrun-manage',
         redirect: '/goods-manage/selfrun-manage/list',
         component: () => import('@/views/goods-manage/selfrun-manage/index'),
+        id: 10,
         name: 'selfrun-manage',
         meta: {
           title: '自营商品库'
@@ -145,6 +201,7 @@ export const constantRoutes = [{
             path: 'goods-add',
             component: () => import('@/views/goods-manage/selfrun-manage/goods-add'),
             name: 'goods-add',
+            id:12,
             meta: {
               title: '自营新增',
               type: 'store'
@@ -155,24 +212,27 @@ export const constantRoutes = [{
             hidden: true,
             component: () => import('@/views/goods-manage/selfrun-manage/goods-add'),
             name: 'goods-edit',
+            id:39,
             meta: {
               title: '自营编辑',
               type: 'store'
             },
           },
-          {
-            path: 'goods-cates',
-            component: () => import('@/views/goods-manage/goods-cates'),
-            name: 'goods-cates',
-            meta: {
-              title: '店铺分类',
-              type: 'store'
-            },
-          },
+          // {
+          //   path: 'goods-cates',
+          //   id:13,
+          //   component: () => import('@/views/goods-manage/goods-cates'),
+          //   name: 'goods-cates',
+          //   meta: {
+          //     title: '商品分类',
+          //     type: 'store'
+          //   },
+          // },
           {
             path: 'list',
             component: () => import('@/views/goods-manage/list'),
             name: 'list',
+            id:13,
             meta: {
               title: '商品列表',
               type: 'store'
@@ -183,6 +243,7 @@ export const constantRoutes = [{
             path: 'banchuan',
             component: () => import('@/views/goods-manage/list'),
             name: 'banchuan',
+            id:14,
             meta: {
               title: '板川商品',
               type: 'store_banchuan'
@@ -196,6 +257,7 @@ export const constantRoutes = [{
         redirect: '/goods-manage/selfrun-manage/list',
         component: () => import('@/views/goods-manage/selfrun-manage/index'),
         name: 'selfrun-manage',
+        id:11,
         meta: {
           title: '板川商品库'
         },
@@ -203,6 +265,7 @@ export const constantRoutes = [{
             path: 'goods-add',
             component: () => import('@/views/goods-manage/banchuan-manage/goods-add'),
             name: 'goods-add',
+            id:15,
             meta: {
               title: '板川新增',
               type: 'basic'
@@ -213,6 +276,7 @@ export const constantRoutes = [{
             hidden: true,
             component: () => import('@/views/goods-manage/banchuan-manage/goods-add'),
             name: 'goods-edit',
+            id:40,
             meta: {
               title: '板川编辑',
               type: 'basic'
@@ -220,6 +284,7 @@ export const constantRoutes = [{
           },
           {
             path: 'goods-cates',
+            id:16,
             component: () => import('@/views/goods-manage/goods-cates'),
             name: 'goods-cates',
             meta: {
@@ -229,6 +294,7 @@ export const constantRoutes = [{
           },
           {
             path: 'list',
+            id:17,
             component: () => import('@/views/goods-manage/list'),
             name: 'list',
             meta: {
@@ -268,6 +334,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/service-staff/list',
     name: 'service-staff',
+    id:18,
     meta: {
       title: '服务人员',
       icon: 'theme'
@@ -276,6 +343,7 @@ export const constantRoutes = [{
     children: [{
       path: 'list',
       name: 'list',
+      id:19,
       component: () => import('@/views/service-staff/list'),
       meta: {
         title: '人员列表'
@@ -286,6 +354,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/coupon-manage/list',
     name: 'coupon-manage',
+    id:20,
     meta: {
       title: '优惠券管理',
       icon: 'star'
@@ -294,6 +363,7 @@ export const constantRoutes = [{
     children: [{
       path: 'list',
       name: 'list',
+      id:21,
       component: () => import('@/views/coupon-manage/list'),
       meta: {
         title: '优惠券列表'
@@ -305,6 +375,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/credit-shop/list',
     name: 'credit-shop',
+    id:22,
     meta: {
       title: '积分商城',
       icon: 'icon'
@@ -313,6 +384,7 @@ export const constantRoutes = [{
     children: [{
         path: 'list',
         name: 'list',
+        id:23,
         component: () => import('@/views/credit-shop/list'),
         meta: {
           title: '积分商品'
@@ -321,6 +393,7 @@ export const constantRoutes = [{
       {
         path: 'goods-add',
         name: 'goods-add',
+        id:24,
         component: () => import('@/views/credit-shop/goods-add'),
         meta: {
           title: '新增商品'
@@ -330,6 +403,7 @@ export const constantRoutes = [{
         path: 'goods-edit',
         name: 'goods-edit',
         hidden: true,
+        id:41,
         component: () => import('@/views/credit-shop/goods-add'),
         meta: {
           title: '编辑商品'
@@ -338,6 +412,7 @@ export const constantRoutes = [{
       {
         path: 'goods-cates',
         name: 'goods-cates',
+        id:25,
         component: () => import('@/views/credit-shop/goods-cates'),
         meta: {
           title: '商品分类'
@@ -350,30 +425,34 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/bargain-goods/list',
     name: 'bargain-goods',
+    id:26,
     meta: {
-      title: '砍价商品',
+      title: '砍价管理',
       icon: 'form'
     },
     alwaysShow: true,
     children: [{
         path: 'list',
+        id:27,
         name: 'bargain-list',
         component: () => import('@/views/bargain-goods/list'),
         meta: {
-          title: '商品列表'
+          title: '砍价商品'
         }
       },
       {
         path: 'goods-add',
+        id:28,
         name: 'bargain-goods-add',
         component: () => import('@/views/bargain-goods/goods-add'),
         meta: {
-          title: '新增商品'
+          title: '新增砍价商品'
         }
       },
       {
         path: 'goods-edit',
         name: 'bargain-goods-edit',
+        id:42,
         hidden: true,
         component: () => import('@/views/bargain-goods/goods-add'),
         meta: {
@@ -395,6 +474,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/seckill-manage/list',
     name: 'seckill-manage',
+    id:29,
     meta: {
       title: '秒杀管理',
       icon: 'form'
@@ -403,6 +483,7 @@ export const constantRoutes = [{
     children: [{
         path: 'list',
         name: 'seckill-list',
+        id:30,
         component: () => import('@/views/seckill-manage/list'),
         meta: {
           title: '活动列表'
@@ -412,6 +493,7 @@ export const constantRoutes = [{
         path: 'goods-list',
         name: 'seckill-goods-list',
         hidden: true,
+        id:43,
         component: () => import('@/views/seckill-manage/goods-list'),
         meta: {
           title: '秒杀商品列表'
@@ -421,6 +503,7 @@ export const constantRoutes = [{
         path: 'goods-edit',
         name: 'seckill-goods-edit',
         hidden: true,
+        id:44,
         component: () => import('@/views/seckill-manage/goods-add'),
         meta: {
           title: '秒杀商品编辑'
@@ -430,6 +513,7 @@ export const constantRoutes = [{
         path: 'goods-add',
         name: 'seckill-goods-add',
         hidden: true,
+        id:45,
         component: () => import('@/views/seckill-manage/goods-add'),
         meta: {
           title: '秒杀商品新增'
@@ -451,6 +535,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/case-manage/classlist',
     name: 'case-manage',
+    id:31,
     meta: {
       title: '案例管理',
       icon: 'star'
@@ -459,6 +544,7 @@ export const constantRoutes = [{
     children: [{
         path: 'classlist',
         name: 'classlist',
+        id:32,
         component: () => import('@/views/case-manage/classlist'),
         meta: {
           title: '案例分类'
@@ -467,6 +553,7 @@ export const constantRoutes = [{
       {
         path: 'comment-check',
         name: 'comment-check',
+        id:33,
         component: () => import('@/views/case-manage/comment-check'),
         meta: {
           title: '评论审核'
@@ -482,6 +569,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/shopapply-manage/record',
     name: 'shopapply-manage',
+    id:34,
     meta: {
       title: '开店申请',
       icon: 'star'
@@ -490,6 +578,7 @@ export const constantRoutes = [{
     children: [{
       path: 'record',
       name: 'shopapply-record',
+      id:35,
       component: () => import('@/views/shopapply-manage/record'),
       meta: {
         title: '开店申请记录'
@@ -503,6 +592,7 @@ export const constantRoutes = [{
     component: Layout,
     redirect: '/order-manage/list',
     name: 'order-manage',
+    id:36,
     meta: {
       title: '订单管理',
       icon: 'star'
@@ -511,6 +601,7 @@ export const constantRoutes = [{
     children: [{
       path: 'list',
       name: 'order-list',
+      id:37,
       component: () => import('@/views/order-manage/list'),
       meta: {
         title: '订单列表'
@@ -604,27 +695,5 @@ export const constantRoutes = [{
   // },
 
   // 404 page must be placed at the end !!!
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
-]
-
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({
-    y: 0
-  }),
-  routes: constantRoutes
-})
-
-const router = createRouter()
-
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
-}
-
-export default router
+  
+];

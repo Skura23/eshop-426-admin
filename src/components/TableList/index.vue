@@ -65,6 +65,7 @@
         label="操作"
         align="center"
         :width="operationWidth"
+        v-if="hasOperation"
       >
         <template slot-scope="{row}">
           <slot
@@ -151,6 +152,10 @@
         type: Boolean,
       },
       hasKeyword: {
+        type: Boolean,
+        default: true
+      },
+      hasOperation: {
         type: Boolean,
         default: true
       },

@@ -1,14 +1,15 @@
 import {
   login,
-  api,
   logout,
   getInfo
 } from '@/api/user'
+import api from '@/api/shopManage'
 import {
   getToken,
   setToken,
   removeToken,
-  removeUserinfo
+  removeUserinfo,
+  removeMenulist,
 } from '@/utils/auth'
 import {
   resetRouter
@@ -81,16 +82,24 @@ const actions = {
             commit('SET_TOKEN', data.response.token)
             setToken(data.response.token)
             Cookies.set('eshop-426-admin_userinfo', data.response)
-            Message({
-              message: response.info,
-              type: 'success',
-              duration: 1.5 * 1000,
-              onClose() {
-                vm.$router.push({
-                  path: vm.redirect || '/'
-                })
-              }
+
+            // 获取菜单列表
+            api.menu_list({}).then((res) => {
+              localStorage.setItem('eshop-426-admin_menulist', JSON.stringify(res.data || []));
+              console.log(localStorage.getItem('eshop-426-admin_menulist'), 'eshop-426-admin_menulist');
+              Message({
+                message: response.info,
+                type: 'success',
+                duration: 1.5 * 1000,
+                onClose() {
+                  vm.$router.push({
+                    path: vm.redirect || '/'
+                  })
+                }
+              })
             })
+
+
           } else if (data.status == 2) {
             commit('SET_SEL_SHOP_POP', true)
             // api({
@@ -154,6 +163,7 @@ const actions = {
     state
   }) {
     return new Promise((resolve, reject) => {
+      removeMenulist()
       removeToken() // must remove  token  first
       removeUserinfo()
       resetRouter()

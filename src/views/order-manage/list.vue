@@ -70,8 +70,10 @@
         <el-button
           type="primary"
           size="small"
+          v-if="row.status==2"
+          @click="sendGoods(row)"
         >
-          操作
+          发货
         </el-button>
 
       </template>
@@ -177,6 +179,9 @@
   import Vue from 'vue'
   import api from '@/api/shopManage'
   import cityData from '@/utils/city'
+  import {
+    editCb
+  } from '@/utils'
   import globals from '@/utils/globals'
 
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -274,6 +279,13 @@
     mounted() {},
 
     methods: {
+      sendGoods(data) {
+        api.order_send({
+          order_no: data.order_no
+        }).then((res) => {
+          editCb(res, this.searGoods)
+        })
+      },
       cfmCheck() {
         api.factory_request_check(this.form).then((res) => {
           this.dialogFormVisible = false
@@ -295,55 +307,56 @@
 
       },
       searGoods(query) {
-        let res = {
-          "code": "9999",
-          "info": "请求成功",
-          "cache": {
-            "status": false,
-            "cacheEndTime": 0
-          },
-          "data": {
-            "total": 1,
-            "total_pay_amount": "10000.00",
-            "list": [{
-              "member_id": "1",
-              "factory_id": "1",
-              "order_no": "202005240000011",
-              "order_type": "normal",
-              "member_name": "小明",
-              "member_phone": "13917871964",
-              "receipt_phone": "13917871964",
-              "receipt_name": "小明",
-              "receipt_address": "上海市浦东新区张江路1358号",
-              "amount": "12001.00",
-              "yh": "2001.00",
-              "real_amount": "10000.00",
-              "pay_amount": "10000.00",
-              "pay_time": "2020-05-24 20:06",
-              "add_time": "2020-05-24 19:59",
-              "status": "2",
-              "factory_name": "板川%",
-              "goods": [{
-                "goods_image": [
-                  "http://api.metujia.com/uploads/images/eurorepar.png",
-                  "http://api.metujia.com/uploads/images/timg.jpg"
-                ],
-                "option_name": "黄色;30寸",
-                "goods_name": "板川集成灶",
-                "num": "1",
-                "price": "12001.00"
-              }]
-            }]
-          }
-        }
+        // let res = {
+        //   "code": "9999",
+        //   "info": "请求成功",
+        //   "cache": {
+        //     "status": false,
+        //     "cacheEndTime": 0
+        //   },
+        //   "data": {
+        //     "total": 1,
+        //     "total_pay_amount": "10000.00",
+        //     "list": [{
+        //       "member_id": "1",
+        //       "factory_id": "1",
+        //       "order_no": "202005240000011",
+        //       "order_type": "normal",
+        //       "member_name": "小明",
+        //       "member_phone": "13917871964",
+        //       "receipt_phone": "13917871964",
+        //       "receipt_name": "小明",
+        //       "receipt_address": "上海市浦东新区张江路1358号",
+        //       "amount": "12001.00",
+        //       "yh": "2001.00",
+        //       "real_amount": "10000.00",
+        //       "pay_amount": "10000.00",
+        //       "pay_time": "2020-05-24 20:06",
+        //       "add_time": "2020-05-24 19:59",
+        //       "status": "2",
+        //       "factory_name": "板川%",
+        //       "goods": [{
+        //         "goods_image": [
+        //           "http://api.metujia.com/uploads/images/eurorepar.png",
+        //           "http://api.metujia.com/uploads/images/timg.jpg"
+        //         ],
+        //         "option_name": "黄色;30寸",
+        //         "goods_name": "板川集成灶",
+        //         "num": "1",
+        //         "price": "12001.00"
+        //       }]
+        //     }]
+        //   }
+        // }
+
+        // this.tableData = res.data
+        // this.query = query
+
+        api.order_list(query).then((res) => {
 
           this.tableData = res.data
           this.query = query
-        // api.order_list(query).then((res) => {
-
-        //   this.tableData = res.data
-        //   this.query = query
-        // })
+        })
       },
       reshapeData() {
         for (let i = 0; i < this.tableData.list.length; i++) {

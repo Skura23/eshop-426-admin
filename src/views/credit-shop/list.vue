@@ -151,16 +151,12 @@
             <el-button
               type="primary"
               size="mini"
-              @click="upDownShelf(row, 2)"
+              @click="upDownShelf(row, row.status)"
             >
-              上架
+              {{row.status==1? '下架':'上架'}}
             </el-button>
 
-            <el-button
-              type="danger"
-              size="mini"
-              @click="upDownShelf(row, 1)"
-            >下架</el-button>
+            
           </div>
 
         </template>
@@ -383,7 +379,7 @@
           status
         }).then((res) => {
           if (res.code == 9999) {
-            this.$message(`商品${putaway==1?'上架':'下架'}成功`);
+            this.$message(`商品${status==1?'上架':'下架'}成功`);
           } else {
             this.$message.error('操作失败');
           }
@@ -397,7 +393,7 @@
         if (!this.listQuery.class_id) {
           this.listQuery.class_id = []
         }
-        this.listQuery.class_id = this.listQuery.class_id[1]
+        // this.listQuery.class_id = this.listQuery.class_id[1]
         let cb = response => {
           this.list = response.data.list
           this.total = response.data.total

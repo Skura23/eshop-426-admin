@@ -12,6 +12,8 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+import {asyncRouterMap} from './router'
+
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -29,6 +31,29 @@ if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
+
+
+// 用来手动给路由加id
+// let num=1
+// function iterateRouterMap(arr) {
+//   for (let i = 0; i < arr.length; i++) {
+//     let elem = arr[i];
+//     elem.id = num
+//     num++
+//     if (elem.children) {
+//       for (let i2 = 0; i2 < elem.children.length; i2++) {
+//         let elem2 = elem.children[i2];
+//         elem2.id = num
+//         num++
+//         iterateRouterMap(elem2, i)
+//       }
+//     }
+//   }
+// }
+// iterateRouterMap(asyncRouterMap)
+// console.log(asyncRouterMap, 'asyncRouterMap');
+
+
 
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })

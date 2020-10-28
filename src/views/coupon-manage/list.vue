@@ -136,15 +136,15 @@ add_time -->
           <el-button
             type="primary"
             size="mini"
-            @click="modiStatus(row, 2)"
+            @click="modiStatus(row, row.status)"
           >
-            上架
+            {{row.status==1?'下架': '上架'}}
           </el-button>
-          <el-button
+          <!-- <el-button
             type="danger"
             size="mini"
             @click="modiStatus(row, 1)"
-          >下架</el-button>
+          >下架</el-button> -->
           <el-button
             type="danger"
             size="mini"
@@ -165,7 +165,7 @@ add_time -->
     />
 
     <el-dialog
-      :title="textMap[dialogStatus]"
+      :title="textMap[diaType]"
       :visible.sync="dialogFormVisible"
       :class="{'_detail-dia':diaType=='detail'}"
       @close="diaClose"
@@ -426,8 +426,8 @@ add_time -->
         dialogFormVisible: false,
         dialogStatus: '',
         textMap: {
-          update: '编辑',
-          create: '新增'
+          detail: '详情',
+          add: '新增'
         },
         dialogPvVisible: false,
         pvData: [],
@@ -539,11 +539,11 @@ add_time -->
           status,
           coupon_id: row.coupon_id
         }).then((res) => {
-          if (res.code==9999) {
-              this.$message(`商品${putaway==1?'上架':'下架'}成功`);
-            } else {
-              this.$message.error('操作失败');
-            }
+          if (res.code == 9999) {
+            this.$message(`商品${status==1?'上架':'下架'}成功`);
+          } else {
+            this.$message.error('操作失败');
+          }
           this.getList()
         })
       },
@@ -575,11 +575,40 @@ add_time -->
         console.log(val, 'changeDate');
       },
       handleDelte(row) {
-        api.coupon_delete(
-          _.pick(row, ['coupon_id'])
-        ).then((res) => {
-          this.getList()
-        })
+        this.$confirm('确定删除数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          api.coupon_delete(
+            _.pick(row, ['coupon_id'])
+          ).then((res) => {
+            if (res.code == 9999) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!',
+                duration:1200,
+                onClose: () => {
+                  this.getList()
+                }
+              });
+            } else {
+              this.$message({
+                type: 'success',
+                message: res.info
+              });
+            }
+
+          })
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+
       },
       getList() {
         this.listLoading = true
@@ -681,6 +710,14 @@ add_time -->
       input {
         all: unset;
         pointer-events: none;
+      }
+      textarea{
+        border: none;
+        resize:none;
+        pointer-events: none;
+      }
+      .el-form-item__error{
+        display: none;
       }
     }
   }

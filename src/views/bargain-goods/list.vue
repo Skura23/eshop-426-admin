@@ -8,7 +8,7 @@
       :table-list="tableData.list"
       :tableMap="tableMap"
       :total="tableData.total"
-      :slot-col="['goods_image','status_type', 'bargin_time']"
+      :slot-col="['goods_image','status_type','status', 'bargin_time']"
     >
 
       <template #query="{querylist}">
@@ -53,34 +53,31 @@
       <template #status_type="{row}">
         {{row.status_type=='not_start'? '未开始':row.status_type=='complete'? '已结束':'进行中'}}
       </template>
+      <template #status="{row}">
+        {{row.status==1? '已上架':'已下架'}}
+      </template>
 
       <template #operation="{row}">
         
         <el-button
               type="primary"
               size="mini"
-              @click="updownGoods(row, 2)"
+              @click="updownGoods(row, row.status)"
             >
-              上架
+              {{row.status==1? '下架':'上架'}}
             </el-button>
-            <el-button
-              type="danger"
-              size="mini"
-              @click="updownGoods(row, 1)"
-            >
-              下架
-            </el-button>
+            
         <el-button
           type="primary"
           size="small"
           v-if="row.status_type=='not_start'"
           @click="editGoods(row)"
         >编辑</el-button>
-        <el-button
+        <!-- <el-button
           type="primary"
           size="small"
           @click="delGoods(row)"
-        >删除</el-button>
+        >删除</el-button> -->
       </template>
     </TableList>
   </div>
@@ -162,6 +159,10 @@
           },
           status_type: {
             headname: '活动状态',
+            width: ''
+          },
+          status: {
+            headname: '商品状态',
             width: ''
           },
         }

@@ -892,7 +892,7 @@ type="number"
       // #region 规格编辑
       submit() {
         if (this.modiType === 'add') {
-          api.goods_create(this.modiTosendData()).then((res) => {
+          api.store_goods_create(this.modiTosendData()).then((res) => {
             this.$message({
               message: res.info,
               type: '',

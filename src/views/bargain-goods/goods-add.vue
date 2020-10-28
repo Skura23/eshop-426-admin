@@ -19,6 +19,17 @@
             <i class="el-icon-plus"></i>
           </el-upload>
         </template>
+        <template v-slot:goods_share_logo="{val,datakey}">
+          <!-- :file-list="formData.l_imgs" -->
+          <el-upload
+            :action="uplUrl"
+            list-type="picture-card"
+            :on-success="uplSucc2"
+            :on-remove="removeImg2"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+        </template>
         <template v-slot:goods_share_describe="{val,datakey}">
           <el-input v-model="val[datakey]"></el-input>
         </template>
@@ -105,7 +116,7 @@
         uplUrl: globals.curBaseUrl + '/upload',
         l_imgs: [],
         formData: {
-          "goods_name": '',
+          "factory_id": '',
           "market_price": '',
           "end_price": '',
           "display": '1',
@@ -113,6 +124,7 @@
           "end_time": '',
           "time_limit": '',
           "goods_image": [],
+          "goods_share_logo": [],
           "total_time": '',
           "each_time": '',
           "goods_share_title": '',
@@ -137,11 +149,31 @@
         //     configData: {}
         //   },
         configList: {
-          "goods_name": {
-            label: '商品名称',
+          "factory_id": {
+            label: '门店名称',
           },
-          "market_price": {
-            label: '市场价',
+          "organization_type": {
+            label: '主体类型',
+            type: 'select',
+            opts: [{
+              value: '2401',
+              label: '小微商户',
+            }, {
+              value: '2500',
+              label: '个人卖家',
+            }, {
+              value: '4',
+              label: '个体工商户',
+            }, {
+              value: '2',
+              label: '企业',
+            }, {
+              value: '3',
+              label: '党政、机关及事业单位',
+            }, {
+              value: '1708',
+              label: '其他组织',
+            }],
           },
           "end_price": {
             label: '底价',
@@ -175,11 +207,16 @@
             label: '商品图片',
             slot: 'goods_image'
           },
+          
           total_time: {
             label: '可砍价总次数',
           },
           each_time: {
             label: '每人可砍次数',
+          },
+          goods_share_logo: {
+            label: '分享图片',
+            slot: 'goods_share_logo'
           },
           goods_share_title: {
             label: '分享标题',
@@ -261,6 +298,15 @@
         // console.log(fileList, file, 'fileList');
         this.imgArrRegroup2(fileList)
       },
+      removeImg2(file, fileList) {
+        console.log(fileList, 'fileList');
+        this.shareimgArrRegroup(fileList)
+      },
+      uplSucc2(res, file, fileList) {
+        fileList[fileList.length - 1].url = res.data[0].all_path
+        // console.log(fileList, file, 'fileList');
+        this.shareimgArrRegroup(fileList)
+      },
       dateToArr() {
         this.formData.l_date = [this.formData.start_time, this.formData.end_time]
       },
@@ -270,20 +316,25 @@
           this.formData.end_time = data.l_date[1]
         }
       },
-      imgArrRegroup() {
-        let arr = []
-        this.goods_image.forEach((elem, idx) => {
-          let obj = {}
-          obj.name = idx
-          obj.url = elem
-          arr.push(obj)
-        });
-        this.formData.l_imgs = arr
-      },
+      // imgArrRegroup() {
+      //   let arr = []
+      //   this.goods_image.forEach((elem, idx) => {
+      //     let obj = {}
+      //     obj.name = idx
+      //     obj.url = elem
+      //     arr.push(obj)
+      //   });
+      //   this.formData.l_imgs = arr
+      // },
       imgArrRegroup2(data) {
         let arr = []
         arr = data.map(v => v.url)
         this.formData.goods_image = arr
+      },
+      shareimgArrRegroup(data) {
+        let arr = []
+        arr = data.map(v => v.url)
+        this.formData.goods_share_logo = arr
       },
       submit(data) {
         console.log(data, 'submit');

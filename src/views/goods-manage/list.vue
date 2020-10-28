@@ -1,6 +1,6 @@
 <!-- eshop426admin template -->
 <template>
-  <div class="app-container">
+  <div class="app-container page-good-manage-list">
     <div class="filter-container">
       <el-input
         v-model="listQuery.keywords_like"
@@ -130,17 +130,12 @@
             <el-button
               type="primary"
               size="mini"
-              @click="upDownShelf(row, 2)"
+              @click="upDownShelf(row, row.putaway)"
             >
-              <!-- {{ row.putaway==1 ? '下架':'上架' }} -->
-              上架
+              {{ row.putaway==1 ? '下架':'上架' }}
             </el-button>
 
-            <el-button
-              type="danger"
-              size="mini"
-              @click="upDownShelf(row, 1)"
-            >下架</el-button>
+            
 
           </div>
           <div v-if="type=='store_banchuan'">
@@ -151,18 +146,15 @@
             >
               更新价格
             </el-button>
+
             <el-button
               type="primary"
               size="mini"
-              @click="upDownShelf(row, 2)"
+              @click="upDownShelf(row, row.putaway)"
             >
-              上架
+              {{row.putaway==1? '下架':'上架'}}
             </el-button>
-            <el-button
-              type="danger"
-              size="mini"
-              @click="upDownShelf(row, 1)"
-            >下架</el-button>
+            
           </div>
           <div v-if="type=='basic'">
             <el-button
@@ -182,9 +174,145 @@
           </div>
 
 
+
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      title="更新价格"
+      :visible.sync="priceDialogFormVisible"
+    >
+      <el-form v-model="goodsDetail" label-width="120px">
+        <el-form-item
+          label="价格"
+        >
+          <el-input
+            v-model="goodsDetail.price"
+            type="number"
+            autocomplete="off"
+            style="width:200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="客户推广佣金"
+        >
+          <el-input
+            v-model="goodsDetail.member_commission"
+            type="number"
+            autocomplete="off"
+            style="width:200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="水电工佣金"
+        >
+          <el-input
+            v-model="goodsDetail.plumber_commission"
+            type="number"
+            autocomplete="off"
+            style="width:200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="设计师佣金"
+        >
+          <el-input
+            v-model="goodsDetail.stylist_commission"
+            type="number"
+            autocomplete="off"
+            style="width:200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="开启拼团"
+          prop="is_group"
+        >
+          <div>
+            <el-radio
+              v-model="goodsDetail.is_group"
+              label="1"
+            >是</el-radio>
+            <el-radio
+              v-model="goodsDetail.is_group"
+              label="2"
+            >否</el-radio>
+          </div>
+          <div v-show="goodsDetail.is_group==1">
+            <div
+              class="i-b"
+              style="width:300px"
+            >
+              <el-input
+                placeholder="请输入内容"
+                v-model="goodsDetail.group_price"
+              >
+                <template slot="prepend">拼团价格</template>
+                <template slot="append">元</template>
+              </el-input>
+            </div>
+            <div
+              class="i-b"
+              style="width:300px"
+            >
+              <el-input
+                placeholder="请输入内容"
+                v-model="goodsDetail.group_num"
+              >
+                <template slot="prepend">开团人数</template>
+                <template slot="append">人</template>
+              </el-input>
+            </div>
+            <div
+              class="i-b"
+              style="width:300px;margin-top:10px;"
+            >
+              <el-input
+                placeholder="请输入内容"
+                v-model="goodsDetail.group_end_time"
+              >
+                <template slot="prepend">组团限时</template>
+                <template slot="append">小时</template>
+              </el-input>
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item
+          label="开启预付"
+          prop="is_prepay"
+        >
+          <div>
+            <el-radio
+              v-model="goodsDetail.is_prepay"
+              label="1"
+            >是</el-radio>
+            <el-radio
+              v-model="goodsDetail.is_prepay"
+              label="2"
+            >否</el-radio>
+          </div>
+          <div v-show="goodsDetail.is_prepay==1">
+            <el-input
+              v-model="goodsDetail.prepay_price"
+              placeholder="输入预付定金"
+              type="number"
+              class="_w200"
+            />
+          </div>
+        </el-form-item>
+      </el-form>
+
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="priceDialogFormVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="cfmUpdPrice()"
+        >确 定</el-button>
+      </div>
+    </el-dialog>
 
     <pagination
       v-show="total>0"
@@ -279,7 +407,8 @@
   import cityData from '@/utils/city'
   // import waves from '@/directive/waves' // waves directive
   import {
-    parseTime
+    parseTime,
+    editCb
   } from '@/utils'
   import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   import Cookies from 'js-cookie'
@@ -303,6 +432,7 @@
     },
     data() {
       return {
+        price: '',
         cateList: [],
         type: '',
         putawayArr: [{
@@ -361,7 +491,9 @@
             trigger: 'blur'
           }]
         },
-        downloadLoading: false
+        downloadLoading: false,
+        priceDialogFormVisible: false,
+        goodsDetail: ''
       }
     },
     created() {
@@ -376,18 +508,32 @@
       })
     },
     methods: {
+
+
       updPrice(row) {
+        this.priceDialogFormVisible = true
         api.factory_goods_detail({
-          goods_id: 6
+          goods_id: row.goods_id
         }).then((res) => {
-          api.factory_basic_goods_price_update(res.data).then((res) => {
-            if (res.code == 9999) {
-              this.$message('更新成功');
-            }
-          })
+          this.goodsDetail = res.data
         })
+      },
+      cfmUpdPrice() {
+        // api.factory_goods_detail({
+        //   goods_id: row.goods_id
+        // }).then((res) => {
 
+        // })
+        api.factory_basic_goods_price_update(this.goodsDetail).then((res) => {
+          if (res.code == 9999) {
+            this.$message('更新成功');
+            this.getList()
+            this.priceDialogFormVisible = false;
+          } else {
+            this.$message(res.info);
+          }
 
+        })
       },
       filterCate(node, keyword) {
         // if (node.data.label == '分类') {
@@ -423,7 +569,7 @@
             goods_id: row.goods_id,
             putaway
           }).then((res) => {
-            if (res.code==9999) {
+            if (res.code == 9999) {
               this.$message(`商品${putaway==1?'上架':'下架'}成功`);
             } else {
               this.$message.error('操作失败');
@@ -435,7 +581,7 @@
             goods_id: row.goods_id,
             putaway
           }).then((res) => {
-            if (res.code==9999) {
+            if (res.code == 9999) {
               this.$message(`商品${putaway==1?'上架':'下架'}成功`);
             } else {
               this.$message.error('操作失败');
@@ -559,3 +705,9 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .page-good-manage-list ._w200 {
+    width: 200px;
+  }
+</style>

@@ -1,6 +1,17 @@
 /**
  * Created by PanJiaChen on 16/11/18.
  */
+//1.首先引入`vue`
+import Vue from 'vue'
+//2.创建vue的实例
+let v = new Vue()
+
+// import {
+//   MessageBox,
+//   Message
+// } from 'element-ui'
+// import api from '@/api/shopManage'
+
 
 /**
  * Parse the time to string
@@ -37,7 +48,9 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -97,11 +110,68 @@ export function param2Obj(url) {
   }
   return JSON.parse(
     '{"' +
-      decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"')
-        .replace(/\+/g, ' ') +
-      '"}'
+    decodeURIComponent(search)
+    .replace(/"/g, '\\"')
+    .replace(/&/g, '","')
+    .replace(/=/g, '":"')
+    .replace(/\+/g, ' ') +
+    '"}'
   )
+}
+
+// app 相关
+/**
+ * @param  {} row
+ * @param  {} apiname 接口名
+ * @param  {} idname id名
+ * @param  {} cb
+ */
+export function deleteLinePop(row, apiname, idname, cb) {
+  v.$confirm('确定删除数据?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    api[apiname](
+      _.pick(row, [idname])
+    ).then((res) => {
+      if (res.code == 9999) {
+        v.$message({
+          type: 'success',
+          message: '删除成功!',
+          duration:1200,
+          onClose: () => {
+            cb()
+          }
+        });
+      } else {
+        v.$message({
+          type: 'success',
+          message: res.info
+        });
+      }
+
+    })
+
+  }).catch(() => {
+    v.$message({
+      type: 'info',
+      message: '已取消删除'
+    });
+  });
+}
+
+export function editCb(res, cb) {
+  if (res.code == 9999) {
+    v.$message({
+      message: res.info,
+      onClose() {
+        cb && cb()
+      },
+    })
+  } else {
+    v.$message({
+      message: res.info,
+    })
+  }
 }

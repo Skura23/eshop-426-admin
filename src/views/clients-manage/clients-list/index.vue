@@ -4,72 +4,76 @@
       class="filter-container"
       style="line-height: 3.5;"
     >
-      客户编号:
-      <el-input
-        v-model="listQuery.member_code_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      手机号:
-      <el-input
-        v-model="listQuery.phone_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      联系人:
-      <el-input
-        v-model="listQuery.contacts_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      客户名:
-      <el-input
-        v-model="listQuery.member_name_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      其他电话:
-      <el-input
-        v-model="listQuery.other_phone_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      关键字:
-      <el-input
-        v-model="listQuery.keywords_like"
-        placeholder="请输入"
-        style="width: 120px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-      &nbsp;
-      创建时间:
-      <el-date-picker
-        v-model="listQuery.l_date"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        value-format="yyyy-MM-dd"
-      >
-      </el-date-picker>
-      &nbsp;
-      性别:
+      <div class="">
+        客户编号:
+        <el-input
+          v-model="listQuery.member_code_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        &nbsp;
+        手机号:
+        <el-input
+          v-model="listQuery.phone_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        &nbsp;
+        联系人:
+        <el-input
+          v-model="listQuery.contacts_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        &nbsp;
+        客户名:
+        <el-input
+          v-model="listQuery.member_name_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+      </div>
+
+      <div class="">
+        其他电话:
+        <el-input
+          v-model="listQuery.other_phone_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        &nbsp;
+        关键字:
+        <el-input
+          v-model="listQuery.keywords_like"
+          placeholder="请输入"
+          style="width: 120px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        &nbsp;
+        创建时间:
+        <el-date-picker
+          v-model="listQuery.l_date"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd"
+        >
+        </el-date-picker>
+        &nbsp;
+      </div>
+      <!-- 性别:
       <el-select
         v-model="listQuery.sex"
         placeholder="性别"
@@ -83,10 +87,9 @@
           :label="item.label"
           :value="item.val"
         />
-      </el-select>
-      &nbsp;
+      </el-select> -->
       <el-button
-        class="filter-item"
+        class="filter-item mr"
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
@@ -107,7 +110,7 @@
         style="margin-left: 10px;"
         type="primary"
         icon="el-icon-download"
-        @click="handleBatchUpl"
+        @click="handleDldTemp"
       >
         <el-link
           type="primary"
@@ -139,6 +142,7 @@
         :on-change="handleUplChange"
         :on-success="handleUplDone"
         :file-list="fileList"
+        accept=".xls,.xlsx"
       >
         <el-button type="primary">点击上传</el-button>
         <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
@@ -208,16 +212,16 @@ root_factory_id: "1"
 sex: null
 tag_list: [] -->
       <el-table-column
-        label="联系人"
-        prop="contacts"
+        label="手机号"
+        prop="phone"
         width="110px"
         align="center"
       >
         <template slot-scope="{row}">
-          <span>{{ row.contacts }}</span>
+          <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         v-if="showReviewer"
         prop="phone"
         label="电话"
@@ -227,7 +231,7 @@ tag_list: [] -->
         <template slot-scope="{row}">
           <span style="">{{ row.phone }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column
         label="客户编号"
@@ -266,12 +270,17 @@ tag_list: [] -->
       <el-table-column
         label="客户标签"
         align="center"
+        width="260px"
       >
         <template slot-scope="{row}">
-          <el-tag v-for="(item, index) in row.tag_list" :key="index" class="mt10 ml10">{{item.tag_name}}</el-tag>
+          <el-tag
+            v-for="(item, index) in row.tag_list"
+            :key="index"
+            class="mt10 ml10"
+          >{{item.tag_name}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="操作"
         width="110px"
         align="center"
@@ -284,7 +293,7 @@ tag_list: [] -->
             >编辑</el-link>
           </span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <div class="mt">
@@ -684,7 +693,7 @@ area_detail -->
         } else {
           this.disHandleTag = false
         }
-        let ids = _.map(val, 'factory_id').join(',')
+        let ids = _.map(val, 'member_id').join(',')
         this.clientsCheckIds = ids
         console.log(val, 'handleSelectionChange');
       },
@@ -828,16 +837,17 @@ area_detail -->
           message: res.info,
           type: '',
         })
+        api.batch_member_create_upload({
+          href: res.data[0].all_path
+        }).then((res) => {
+
+        })
       },
       handleUplChange() {
 
       },
-      handleBatchUpl() {
-        api.batch_member_create_excel({
+      handleDldTemp() {
 
-        }).then((res) => {
-
-        })
       },
       getList() {
         this.listLoading = true

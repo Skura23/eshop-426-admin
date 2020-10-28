@@ -66,9 +66,8 @@
       <el-table-column
         label="门店名称"
         prop="id"
-        sortable="custom"
         align="center"
-        width="200"
+        width=""
         :class-name="getSortClass('id')"
       >
         <template slot-scope="{row}">
@@ -77,7 +76,7 @@
       </el-table-column>
       <el-table-column
         label="联系人名称"
-        width="200"
+        width=""
         align="center"
       >
         <template slot-scope="{row}">
@@ -86,8 +85,28 @@
         </template>
       </el-table-column>
       <el-table-column
+        label="超管账号"
+        width=""
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{row.admin_phone || '/'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="微信二级商户号"
+        width=""
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{row.sub_mch_id || '/'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="门店联系电话"
-        width="200"
+        width=""
         align="center"
       >
         <template slot-scope="{row}">
@@ -122,13 +141,24 @@
       <el-table-column
         label="状态"
         class-name="status-col"
-        width="200"
+        width=""
         align="center"
       >
         <template slot-scope="{row}">
           <span>
             {{ row.status | statusFilter }}
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="平台费率"
+        class-name="status-col"
+        width=""
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <!-- <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{row.fee_rate+'%' || '/'}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -141,7 +171,17 @@
           <el-button
             type="primary"
             size="mini"
+            v-show="row.grade==1"
+            @click="editFee(row)"
+            style="margin-top:10px"
+          >
+            修改费率
+          </el-button>
+          <el-button
+            type="primary"
+            size="mini"
             @click="handleUpdate(row)"
+            style="margin-top:10px"
           >
             编辑
           </el-button>
@@ -149,6 +189,7 @@
             size="mini"
             :type="row.status==1?'success':'danger'"
             @click="handleStatus(row)"
+            style="margin-top:10px"
           >
 
             {{row.status | statusBtnFilter}}
@@ -242,6 +283,10 @@
           prop="status"
           label="状态"
         >
+          <template slot-scope="{row}">
+            {{row.status==1?'正常':'冻结'}}
+          </template>
+
         </el-table-column>
         <el-table-column
           prop="status"
@@ -290,7 +335,7 @@
             prop="chooseShop"
             v-show="dialogStatus==='create' && userInfo.grade==1"
           >
-            <span>{{chosenShop}}</span>
+            <span>{{temp.chosenShop}}</span>
             <el-link
               type="primary"
               :underline="false"
@@ -300,15 +345,16 @@
           <!-- username:'',
         user_phone: '',
         user_psd: '', -->
+
           <el-form-item
-            label="用户名"
+            label="超级管理员名称"
             prop="username"
           >
             <el-input v-model="temp.username" />
           </el-form-item>
 
           <el-form-item
-            label="密码"
+            label="超级管理员密码"
             prop="user_psd"
           >
             <el-input
@@ -316,6 +362,12 @@
               type="password"
               show-password
             />
+          </el-form-item>
+          <el-form-item
+            label="超级管理员手机号(账号)"
+            prop="user_phone"
+          >
+            <el-input v-model="temp.user_phone" />
           </el-form-item>
         </div>
 
@@ -379,10 +431,7 @@
           <el-input v-model="temp.lng" />
         </el-form-item>
 
-        <el-form-item
-          label="省市区"
-          prop="address_info[area_detail]"
-        >
+        <el-form-item label="省市区">
           <el-cascader
             v-model="area"
             :options="citysOptions"
@@ -528,6 +577,7 @@
             area_id: '',
             area_detail: '',
           },
+          chosenShop: '',
         },
         // 新增门店数据容器
         // tempAdd: {
@@ -567,18 +617,24 @@
             trigger: 'blur',
             message: '请输入联系人'
           }],
+
+          user_phone: [{
+            required: true,
+            trigger: 'blur',
+            message: '请输入手机号'
+          }],
           phone: [{
             required: true,
             trigger: 'blur',
             message: '请输入手机号'
           }],
           username: [{
-            required: this.dialogStatus=='created',
+            required: this.dialogStatus == 'created',
             trigger: 'blur',
             message: '请输入用户名'
           }],
           user_psd: [{
-            required: this.dialogStatus=='created',
+            required: this.dialogStatus == 'created',
             trigger: 'blur',
             message: '请输入密码'
           }],
@@ -587,11 +643,7 @@
             trigger: 'blur',
             message: '请输入详细地址'
           }],
-          'address_info[area_detail]': [{
-            required: true,
-            trigger: 'blur',
-            message: '请输入详细地址'
-          }],
+
           // area: [{
           //   required: true,
           //   trigger: 'blur',
@@ -643,6 +695,30 @@
       this.getList()
     },
     methods: {
+      editFee(row) {
+        this.$prompt('请填写平台抽成费率', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({
+          value
+        }) => {
+          api.factory_fee_edit({
+            factory_id: row.factory_id,
+            fee_rate: value
+          }).then((res) => {
+            this.getList()
+            this.$message({
+              message: res.info,
+              type: '',
+            })
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消填写'
+          });
+        });
+      },
       handleCityChange() {
 
       },
@@ -654,7 +730,7 @@
         this.chooseShopListSearTxt = ''
       },
       handleChooseShop(data) {
-        this.chosenShop = data.factory_name
+        this.temp.chosenShop = data.factory_name
         this.temp.p_id = data.factory_id
         this.chooseShopPopVisible = false
       },
@@ -725,11 +801,13 @@
         this.handleFilter()
       },
       resetTemp() {
+
         this.temp = {
           factory_id: '',
           factory_name: '',
           contacts: '',
           phone: '',
+          user_phone: '',
           bank_account: '',
           bank_name: '',
           bank_info: '',
@@ -743,6 +821,7 @@
             area_id: '',
             area_detail: '',
           },
+          chosenShop: '',
         }
         this.area = []
         this.areaPlh = ''
@@ -766,7 +845,6 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             // 修改字段以适应后端
-            this.temp.user_phone = this.temp.phone
             this.temp.address_info.province_id = this.area[0]
             this.temp.address_info.city_id = this.area[1]
             this.temp.address_info.area_id = this.area[2]

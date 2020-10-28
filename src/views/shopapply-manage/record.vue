@@ -133,7 +133,6 @@
       <TableList
         @search="searShop"
         :operation-width="operationWid"
-        :list-query="query"
         :table-list="shopData.list"
         :tableMap="shopMap"
         :total="shopData.total"
@@ -249,33 +248,45 @@
 
     methods: {
       cfmCheck() {
-        api.factory_request_check(this.form).then((res) => {
-          this.dialogFormVisible = false
+        api.factory_request_check({
+          ...this.form,
+          id: this.curId,
+        }).then((res) => {
+          if (res.code == 9999) {
+            this.dialogFormVisible = false
+            this.searGoods()
+          } else {
+            this.$message({
+              message: res.info,
+              type: 'warning',
+            })
+          }
         })
       },
       cfmShop(row) {
-        this.form.factory_id = row.factory_id
+        this.form.allot_factory_id = row.factory_id
         this.form.factory_name = row.factory_name
         this.dialogTableVisible = false
 
       },
       chooseShop() {
         this.dialogTableVisible = true
-        api.factory_list({}).then((res) => {
+
+      },
+      searShop(query) {
+        api.factory_list(query).then((res) => {
           this.shopData = res.data
         })
       },
-      searShop(query) {
-
-      },
       searGoods(query) {
         api.admin_factory_request_list(query).then((res) => {
+          this.listLoading = false
+
           if (res.code == 9999) {
             this.tableData = res.data
             this.query = query
             this.reshapeData()
           } else {
-            this.listLoading = false
             this.$message({
               message: res.info,
               type: 'warning',

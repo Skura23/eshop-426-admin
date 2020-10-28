@@ -458,16 +458,16 @@ var api = {
       }
     })
   },
-  factory_basic_goods_price_update(data) {
-    return request({
-      url: '',
-      method: 'post',
-      data: {
-        "apiName": "factory_store_goods_putaway|goods",
-        ...data
-      }
-    })
-  },
+  // factory_basic_goods_price_update(data) {
+  //   return request({
+  //     url: '',
+  //     method: 'post',
+  //     data: {
+  //       "apiName": "factory_store_goods_putaway|goods",
+  //       ...data
+  //     }
+  //   })
+  // },
   factory_basic_goods_putaway(data) {
     return request({
       url: '',
@@ -597,7 +597,15 @@ let apiList = [
   // 其他
   "check_cases_comment_list|cases",
   "check_update|cases",
-
+  "apply_list|factory",
+  "factory_basic_goods_price_update|goods",
+  "store_goods_create|goods",
+  "apply_create|factory",
+  "apply_detail|factory",
+  "order_send|order",
+  "apply_bound|factory",
+  "factory_fee_edit|factory",
+  "menu_list|factory",
 ]
 
 // 调用方法: api["class_create|integral"]
