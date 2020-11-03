@@ -4,8 +4,8 @@ import {
   constantRouterMap
 } from '@/router';
 import _ from "lodash";
-import deepdash from "deepdash";
-deepdash(_)
+// import deepdash from "deepdash";
+// deepdash(_)
 
 // function hasPermission(roles, route) {
 //   if (route.meta && route.meta.role) {

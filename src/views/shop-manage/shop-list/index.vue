@@ -696,6 +696,8 @@
     },
     methods: {
       editFee(row) {
+        let inpDom = document.querySelector('.el-message-box input')
+        inpDom.value = row.fee_rate
         this.$prompt('请填写平台抽成费率', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -898,8 +900,8 @@
       },
       updateData() {
         console.log('updateData');
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
+        // this.$refs['dataForm'].validate((valid) => {
+        //   if (valid) {
             const tempData = Object.assign({}, this.temp)
             tempData.address_info.province_id = this.area[0]
             tempData.address_info.city_id = this.area[1]
@@ -928,8 +930,8 @@
                 })
               }
             })
-          }
-        })
+        //   }
+        // })
       },
       handleDelete(row, index) {
         this.$notify({
