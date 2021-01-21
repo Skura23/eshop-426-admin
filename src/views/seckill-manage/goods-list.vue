@@ -46,7 +46,7 @@
 
         <template #goods_image="{row}">
           <img
-            :src="row.goods_image"
+            :src="row.goods_image[0]"
             width="100"
             height="100"
           >

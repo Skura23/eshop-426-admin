@@ -96,7 +96,7 @@
       >
         搜索
       </el-button>
-      <el-button
+      <!-- <el-button
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"
@@ -118,7 +118,7 @@
           style="color:#fff"
           :href="tempUrl"
         >下载模板</el-link>
-      </el-button>
+      </el-button> -->
       <el-button
         class="filter-item"
         style="margin-left: 10px;"
@@ -136,7 +136,8 @@
       >
         编辑标签
       </el-button> -->
-      <el-upload
+      
+      <!-- <el-upload
         class="upload-demo"
         :action="uplUrl"
         :on-change="handleUplChange"
@@ -145,8 +146,7 @@
         accept=".xls,.xlsx"
       >
         <el-button type="primary">点击上传</el-button>
-        <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
-      </el-upload>
+      </el-upload> -->
     </div>
     <br>
     <el-table
@@ -278,6 +278,18 @@ tag_list: [] -->
             :key="index"
             class="mt10 ml10"
           >{{item.tag_name}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        width="100px"
+      >
+        <template slot-scope="{row}">
+          <span
+            class="cl-blue c-p"
+            @click="showDia(row)"
+          >详情</span>
         </template>
       </el-table-column>
       <!-- <el-table-column
@@ -502,34 +514,45 @@ area_detail -->
     </el-dialog>
 
     <el-dialog
-      :visible.sync="dialogPvVisible"
-      title="Reading statistics"
+      title="详情"
+      class="_detail-dia"
+      :visible.sync="dialogDetailVisible"
+      width="50%"
+      :before-close="handleClose"
     >
-      <el-table
-        :data="pvData"
-        border
-        fit
-        highlight-current-row
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="key"
-          label="Channel"
-        />
-        <el-table-column
-          prop="pv"
-          label="Pv"
-        />
-      </el-table>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          type="primary"
-          @click="dialogPvVisible = false"
-        >Confirm</el-button>
-      </span>
+      <el-form :model="form">
+        <el-form-item
+          :label="val"
+          :label-width="formLabelWidth"
+          v-for="(val, k, idx) in detailMap"
+          :key="idx"
+        >
+
+          <div
+            class=""
+          >
+          
+            <span v-if="k=='sex'">
+              {{detailData[k] && detailSexMap[detailData[k]]}}
+            </span>
+            <span v-else-if="k=='referrer_type'">
+              {{detailData[k] && detailReferrertypeMap[detailData[k]]}}
+            </span>
+            <span v-else-if="k=='headimgurl'">
+              <img :src="detailData[k]" width="150" alt="">
+            </span>
+            <span v-else-if="k=='tag_list'">
+              <span v-for="(item, index) in detailData[k]" :key="index">{{item.tag_name}} </span>
+            </span>
+
+            <span v-else>
+              {{detailData[k]}}
+            </span>
+          </div>
+        </el-form-item>
+
+
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -568,6 +591,17 @@ area_detail -->
     },
     data() {
       return {
+        detailSexMap: {
+          0: '未知',
+          1: '男',
+          2: '女',
+        },
+        detailReferrertypeMap: {
+          auth: '员工推荐',
+          factory: '店铺推荐',
+          member: '客户推荐',
+        },
+        dialogDetailVisible: false,
         tagCheckIds: '',
         clientsCheckIds: '',
         disHandleTag: true,
@@ -644,7 +678,29 @@ area_detail -->
             trigger: 'blur'
           }]
         },
-        downloadLoading: false
+        downloadLoading: false,
+        detailMap: {
+          member_id: '客户id',
+          root_factory_id: '总店id',
+          member_code: '客户编号',
+          member_name: '客户名称',
+          phone: '手机号',
+          contacts: '联系人',
+          other_phone: '其他电话',
+          sex: '性别',
+          birthday: '生日',
+          address: '地址',
+          id_card_no: '身份证号码',
+          add_time: '创建时间',
+          integral: '积分',
+          all_commission: '累计获得佣金',
+          referrer_id: '推荐人id',
+          referrer_type_name: '推荐人类别',
+          referrer_name: '推荐人名称',
+          headimgurl: '头像',
+          tag_list: '客户标签数组',
+        },
+        detailData: {}
       }
     },
     created() {
@@ -671,6 +727,15 @@ area_detail -->
       // }
     },
     methods: {
+      showDia(data) {
+        // this.dialogDetailVisible = true
+        // api.member_detail({
+        //   member_id: data.member_id
+        // }).then((res) => {
+        //   this.detailData = res.data
+        // })
+        this.$router.push(`/clients-manage/clients-detail?member_id=${data.member_id}`)
+      },
       handleTagCheckChange(val) {
         console.log(val, 'handleTagCheckChange');
         let list = this.tagList.filter((item) => {

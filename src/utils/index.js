@@ -165,6 +165,7 @@ export function editCb(res, cb) {
   if (res.code == 9999) {
     v.$message({
       message: res.info,
+      duration:1200,
       onClose() {
         cb && cb()
       },

@@ -171,7 +171,7 @@
           <el-button
             type="primary"
             size="mini"
-            v-show="row.grade==1"
+            v-show="userInfo.grade==1 && row.sub_mch_id"
             @click="editFee(row)"
             style="margin-top:10px"
           >
@@ -696,8 +696,7 @@
     },
     methods: {
       editFee(row) {
-        let inpDom = document.querySelector('.el-message-box input')
-        inpDom.value = row.fee_rate
+        
         this.$prompt('请填写平台抽成费率', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -720,6 +719,9 @@
             message: '取消填写'
           });
         });
+
+        let inpDom = document.querySelector('.el-message-box input')
+        inpDom.value = row.fee_rate
       },
       handleCityChange() {
 

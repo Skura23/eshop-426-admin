@@ -116,7 +116,7 @@
         uplUrl: globals.curBaseUrl + '/upload',
         l_imgs: [],
         formData: {
-          "factory_id": '',
+          "goods_name": '',
           "market_price": '',
           "end_price": '',
           "display": '1',
@@ -149,31 +149,11 @@
         //     configData: {}
         //   },
         configList: {
-          "factory_id": {
-            label: '门店名称',
+          "goods_name": {
+            label: '商品名称',
           },
-          "organization_type": {
-            label: '主体类型',
-            type: 'select',
-            opts: [{
-              value: '2401',
-              label: '小微商户',
-            }, {
-              value: '2500',
-              label: '个人卖家',
-            }, {
-              value: '4',
-              label: '个体工商户',
-            }, {
-              value: '2',
-              label: '企业',
-            }, {
-              value: '3',
-              label: '党政、机关及事业单位',
-            }, {
-              value: '1708',
-              label: '其他组织',
-            }],
+          "market_price": {
+            label: '市场价',
           },
           "end_price": {
             label: '底价',

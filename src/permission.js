@@ -41,7 +41,19 @@ router.beforeEach(async (to, from, next) => {
         console.log('beforeEach');
         store.dispatch('GenerateRoutes', admin_menulist).then(() => { // 生成可访问的路由表
           router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-          console.log(store.getters.addRouters,router.options.routes, 'store.getters.addRouters');
+          // 404 要加载最后否则出错, 刷新页面会直接到404
+          router.addRoutes([{
+              path: '/404',
+              component: () => import('@/views/404'),
+              hidden: true
+            },
+            {
+              path: '*',
+              redirect: '/404',
+              hidden: true
+            }
+          ])
+          console.log(store.getters.addRouters, router.options.routes, 'store.getters.addRouters');
           next({
             ...to,
             replace: true

@@ -37,11 +37,7 @@ export const constantRouterMap = [{
     hidden: true
   },
 
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
+
 
   {
     path: '/',
@@ -57,11 +53,10 @@ export const constantRouterMap = [{
       }
     }]
   },
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
+  // 404 page must be placed at the end !!!
+
+
+
 
 ]
 
@@ -118,9 +113,17 @@ export const asyncRouterMap = [{
       component: () => import('@/views/shop-manage/wechatshop-add'),
       name: 'wechatshop-add',
       hidden: true,
-      id:38,
+      id: 3,
       meta: {
         title: '微信商户申请'
+      }
+    }, {
+      path: 'wechatmenu',
+      component: () => import('@/views/shop-manage/wechatmenu'),
+      name: 'wechatmenu',
+      id: 37,
+      meta: {
+        title: '微信菜单'
       }
     }],
 
@@ -137,14 +140,25 @@ export const asyncRouterMap = [{
       icon: 'nested'
     },
     children: [{
-      id: 5,
-      path: 'clients-list',
-      component: () => import('@/views/clients-manage/clients-list'),
-      name: 'clients-list',
-      meta: {
-        title: '客户列表'
-      }
-    }]
+        id: 5,
+        path: 'clients-list',
+        component: () => import('@/views/clients-manage/clients-list'),
+        name: 'clients-list',
+        meta: {
+          title: '客户列表'
+        }
+      },
+      {
+        id: 5,
+        path: 'clients-detail',
+        component: () => import('@/views/clients-manage/detail'),
+        name: 'clients-detail',
+        hidden:true,
+        meta: {
+          title: '客户详情'
+        }
+      },
+    ]
   },
   {
     path: '/staff-manage',
@@ -201,7 +215,7 @@ export const asyncRouterMap = [{
             path: 'goods-add',
             component: () => import('@/views/goods-manage/selfrun-manage/goods-add'),
             name: 'goods-add',
-            id:12,
+            id: 12,
             meta: {
               title: '自营新增',
               type: 'store'
@@ -212,7 +226,7 @@ export const asyncRouterMap = [{
             hidden: true,
             component: () => import('@/views/goods-manage/selfrun-manage/goods-add'),
             name: 'goods-edit',
-            id:39,
+            id: 39,
             meta: {
               title: '自营编辑',
               type: 'store'
@@ -232,7 +246,7 @@ export const asyncRouterMap = [{
             path: 'list',
             component: () => import('@/views/goods-manage/list'),
             name: 'list',
-            id:13,
+            id: 13,
             meta: {
               title: '商品列表',
               type: 'store'
@@ -243,7 +257,7 @@ export const asyncRouterMap = [{
             path: 'banchuan',
             component: () => import('@/views/goods-manage/list'),
             name: 'banchuan',
-            id:14,
+            id: 14,
             meta: {
               title: '板川商品',
               type: 'store_banchuan'
@@ -257,7 +271,7 @@ export const asyncRouterMap = [{
         redirect: '/goods-manage/selfrun-manage/list',
         component: () => import('@/views/goods-manage/selfrun-manage/index'),
         name: 'selfrun-manage',
-        id:11,
+        id: 11,
         meta: {
           title: '板川商品库'
         },
@@ -265,7 +279,7 @@ export const asyncRouterMap = [{
             path: 'goods-add',
             component: () => import('@/views/goods-manage/banchuan-manage/goods-add'),
             name: 'goods-add',
-            id:15,
+            id: 15,
             meta: {
               title: '板川新增',
               type: 'basic'
@@ -276,7 +290,7 @@ export const asyncRouterMap = [{
             hidden: true,
             component: () => import('@/views/goods-manage/banchuan-manage/goods-add'),
             name: 'goods-edit',
-            id:40,
+            id: 40,
             meta: {
               title: '板川编辑',
               type: 'basic'
@@ -284,7 +298,7 @@ export const asyncRouterMap = [{
           },
           {
             path: 'goods-cates',
-            id:16,
+            id: 16,
             component: () => import('@/views/goods-manage/goods-cates'),
             name: 'goods-cates',
             meta: {
@@ -294,7 +308,7 @@ export const asyncRouterMap = [{
           },
           {
             path: 'list',
-            id:17,
+            id: 17,
             component: () => import('@/views/goods-manage/list'),
             name: 'list',
             meta: {
@@ -334,7 +348,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/service-staff/list',
     name: 'service-staff',
-    id:18,
+    id: 18,
     meta: {
       title: '服务人员',
       icon: 'theme'
@@ -343,7 +357,7 @@ export const asyncRouterMap = [{
     children: [{
       path: 'list',
       name: 'list',
-      id:19,
+      id: 19,
       component: () => import('@/views/service-staff/list'),
       meta: {
         title: '人员列表'
@@ -354,7 +368,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/coupon-manage/list',
     name: 'coupon-manage',
-    id:20,
+    id: 20,
     meta: {
       title: '优惠券管理',
       icon: 'star'
@@ -363,7 +377,7 @@ export const asyncRouterMap = [{
     children: [{
       path: 'list',
       name: 'list',
-      id:21,
+      id: 21,
       component: () => import('@/views/coupon-manage/list'),
       meta: {
         title: '优惠券列表'
@@ -375,7 +389,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/credit-shop/list',
     name: 'credit-shop',
-    id:22,
+    id: 22,
     meta: {
       title: '积分商城',
       icon: 'icon'
@@ -384,7 +398,7 @@ export const asyncRouterMap = [{
     children: [{
         path: 'list',
         name: 'list',
-        id:23,
+        id: 23,
         component: () => import('@/views/credit-shop/list'),
         meta: {
           title: '积分商品'
@@ -393,7 +407,7 @@ export const asyncRouterMap = [{
       {
         path: 'goods-add',
         name: 'goods-add',
-        id:24,
+        id: 24,
         component: () => import('@/views/credit-shop/goods-add'),
         meta: {
           title: '新增商品'
@@ -403,7 +417,7 @@ export const asyncRouterMap = [{
         path: 'goods-edit',
         name: 'goods-edit',
         hidden: true,
-        id:41,
+        id: 41,
         component: () => import('@/views/credit-shop/goods-add'),
         meta: {
           title: '编辑商品'
@@ -412,7 +426,7 @@ export const asyncRouterMap = [{
       {
         path: 'goods-cates',
         name: 'goods-cates',
-        id:25,
+        id: 25,
         component: () => import('@/views/credit-shop/goods-cates'),
         meta: {
           title: '商品分类'
@@ -425,7 +439,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/bargain-goods/list',
     name: 'bargain-goods',
-    id:26,
+    id: 26,
     meta: {
       title: '砍价管理',
       icon: 'form'
@@ -433,7 +447,7 @@ export const asyncRouterMap = [{
     alwaysShow: true,
     children: [{
         path: 'list',
-        id:27,
+        id: 27,
         name: 'bargain-list',
         component: () => import('@/views/bargain-goods/list'),
         meta: {
@@ -442,7 +456,7 @@ export const asyncRouterMap = [{
       },
       {
         path: 'goods-add',
-        id:28,
+        id: 28,
         name: 'bargain-goods-add',
         component: () => import('@/views/bargain-goods/goods-add'),
         meta: {
@@ -452,7 +466,7 @@ export const asyncRouterMap = [{
       {
         path: 'goods-edit',
         name: 'bargain-goods-edit',
-        id:42,
+        id: 42,
         hidden: true,
         component: () => import('@/views/bargain-goods/goods-add'),
         meta: {
@@ -474,7 +488,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/seckill-manage/list',
     name: 'seckill-manage',
-    id:29,
+    id: 29,
     meta: {
       title: '秒杀管理',
       icon: 'form'
@@ -483,7 +497,7 @@ export const asyncRouterMap = [{
     children: [{
         path: 'list',
         name: 'seckill-list',
-        id:30,
+        id: 30,
         component: () => import('@/views/seckill-manage/list'),
         meta: {
           title: '活动列表'
@@ -493,7 +507,7 @@ export const asyncRouterMap = [{
         path: 'goods-list',
         name: 'seckill-goods-list',
         hidden: true,
-        id:43,
+        id: 43,
         component: () => import('@/views/seckill-manage/goods-list'),
         meta: {
           title: '秒杀商品列表'
@@ -503,7 +517,7 @@ export const asyncRouterMap = [{
         path: 'goods-edit',
         name: 'seckill-goods-edit',
         hidden: true,
-        id:44,
+        id: 44,
         component: () => import('@/views/seckill-manage/goods-add'),
         meta: {
           title: '秒杀商品编辑'
@@ -513,7 +527,7 @@ export const asyncRouterMap = [{
         path: 'goods-add',
         name: 'seckill-goods-add',
         hidden: true,
-        id:45,
+        id: 45,
         component: () => import('@/views/seckill-manage/goods-add'),
         meta: {
           title: '秒杀商品新增'
@@ -535,7 +549,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/case-manage/classlist',
     name: 'case-manage',
-    id:31,
+    id: 31,
     meta: {
       title: '案例管理',
       icon: 'star'
@@ -544,7 +558,7 @@ export const asyncRouterMap = [{
     children: [{
         path: 'classlist',
         name: 'classlist',
-        id:32,
+        id: 32,
         component: () => import('@/views/case-manage/classlist'),
         meta: {
           title: '案例分类'
@@ -553,7 +567,7 @@ export const asyncRouterMap = [{
       {
         path: 'comment-check',
         name: 'comment-check',
-        id:33,
+        id: 33,
         component: () => import('@/views/case-manage/comment-check'),
         meta: {
           title: '评论审核'
@@ -569,7 +583,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/shopapply-manage/record',
     name: 'shopapply-manage',
-    id:34,
+    id: 34,
     meta: {
       title: '开店申请',
       icon: 'star'
@@ -578,7 +592,7 @@ export const asyncRouterMap = [{
     children: [{
       path: 'record',
       name: 'shopapply-record',
-      id:35,
+      id: 35,
       component: () => import('@/views/shopapply-manage/record'),
       meta: {
         title: '开店申请记录'
@@ -592,7 +606,7 @@ export const asyncRouterMap = [{
     component: Layout,
     redirect: '/order-manage/list',
     name: 'order-manage',
-    id:36,
+    id: 36,
     meta: {
       title: '订单管理',
       icon: 'star'
@@ -601,14 +615,51 @@ export const asyncRouterMap = [{
     children: [{
       path: 'list',
       name: 'order-list',
-      id:37,
+      id: 37,
       component: () => import('@/views/order-manage/list'),
       meta: {
         title: '订单列表'
       }
+    }, {
+      path: 'detail',
+      name: 'order-detail',
+      id: '37',
+      hidden: true,
+      component: () => import('@/views/order-manage/detail'),
+      meta: {
+        title: '订单详情'
+      }
     }]
   },
-
+  // 财务
+  {
+    path: '/finance',
+    component: Layout,
+    redirect: '/finance/dailyMoney',
+    name: 'finance',
+    id: 36,
+    meta: {
+      title: '财务',
+      icon: 'star'
+    },
+    alwaysShow: true,
+    children: [{
+      path: 'dailyMoney',
+      name: 'finance-dailyMoney',
+      id: 37,
+      component: () => import('@/views/finance/dailyMoney'),
+      meta: {
+        title: '每日余额'
+      }
+    }, {
+      path: 'wechatmenu',
+      component: () => import('@/views/shop-manage/wechatmenu'),
+      name: 'wechatmenu',
+      meta: {
+        title: '微信菜单'
+      }
+    }]
+  },
 
 
   // 示例页面
@@ -695,5 +746,14 @@ export const asyncRouterMap = [{
   // },
 
   // 404 page must be placed at the end !!!
-  
+  // {
+  //   path: '/404',
+  //   component: () => import('@/views/404'),
+  //   hidden: true
+  // },
+  // {
+  //   path: '*',
+  //   redirect: '/404',
+  //   hidden: true
+  // }
 ];

@@ -593,6 +593,9 @@ let apiList = [
 
   // 订单管理
   "order_list|order",
+  "pc_order_detail|order",
+  // 财务
+  "factory_balance_list|factory",
 
   // 其他
   "check_cases_comment_list|cases",
@@ -606,6 +609,13 @@ let apiList = [
   "apply_bound|factory",
   "factory_fee_edit|factory",
   "menu_list|factory",
+  "member_detail|member",
+  "wei_xin_menu_list|factory",
+  "parent_wei_xin_menu_list|factory",
+  "wei_xin_menu_create|factory",
+  "wei_xin_menu_edit|factory",
+  "wei_xin_menu_delete|factory",
+  "wei_xin_menu_push|factory",
 ]
 
 // 调用方法: api["class_create|integral"]

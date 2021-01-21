@@ -67,6 +67,11 @@
       </template>
 
       <template #operation="{row}">
+        <span
+          class="cl-blue c-p mr"
+          @click="showDia(row)"
+        >详情 </span>
+
         <el-button
           type="primary"
           size="small"
@@ -75,6 +80,8 @@
         >
           发货
         </el-button>
+
+
 
       </template>
     </TableList>
@@ -170,6 +177,127 @@
         </template>
       </TableList>
     </el-dialog>
+
+    <el-dialog
+      title="详情"
+      class="_detail-dia"
+      :visible.sync="dialogDetailVisible"
+      width="50%"
+    >
+      <!-- 详情不封装单个写太麻烦了, 有时间封装 -->
+      <el-form :model="form">
+        <el-form-item
+          :label="typeof val=='string'?val:val.text"
+          :label-width="formLabelWidth"
+          v-for="(val, k, idx) in detailMap"
+          :key="idx"
+        >
+          <div
+            class=""
+            v-if="typeof val == 'object'"
+          >
+            <div
+              class="mb"
+              v-for="(val2, k2, idx2) in detailData[k]"
+              :key="idx2"
+              v-if="k=='goods'|| k=='order_fund_assign'"
+            >
+              <div
+                class=""
+                v-for="(val3, k3, idx3) in val2"
+                :key="idx3"
+                v-if="val[k3]"
+              >
+                <div
+                  class=""
+                  v-if="k3=='assign_type'"
+                >
+                  {{val[k3]}} : {{detialAssigntypeMap[detailData[k][k2][k3]]}}
+                </div>
+                <div
+                  class=""
+                  v-else-if="k3!='goods_image'"
+                >
+                  {{val[k3]}} : {{val3}}
+                </div>
+
+                <div
+                  class=""
+                  v-else
+                >
+                  {{val[k3]}} : <img
+                    :src="val3[0]"
+                    width="150"
+                    alt=""
+                  >
+                </div>
+
+
+
+
+              </div>
+            </div>
+
+            <!-- <div
+              class=""
+              v-for="(val2, k2, idx2) in val"
+              :key="idx2"
+              v-if="k!='audit_detail'"
+            >
+
+              <div
+                class=""
+                v-if="k2!='text' && (k=='goods'|| k=='order_fund_assign') "
+              >{{val2}}:
+                <img
+                  :src="val2[0]"
+                  width="150"
+                  alt=""
+                  v-if="k2=='goods_image'"
+                >
+                <span
+                  class=""
+                  v-if="k2=='assign_type'"
+                >
+                  {{detailData[k] && detialAssigntypeMap[detailData[k][k2]]}}
+                </span>
+
+
+
+                <span
+                  class=""
+                  v-else
+                >
+                  {{detailData[k] && detailData[k][k2]}}
+                </span>
+
+              </div>
+
+            </div> -->
+          </div>
+
+          <div
+            class=""
+            v-else
+          >
+
+
+            <span v-if="k=='status'">
+              {{detailData[k] && detailStatusMap[detailData[k]]}}
+            </span>
+            <span v-if="k=='can_send'">
+              {{detailData[k] && detailCan_sendMap[detailData[k]]}}
+            </span>
+
+            <span v-else>
+              {{detailData[k]}}
+            </span>
+          </div>
+        </el-form-item>
+
+
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -205,6 +333,7 @@
         formLabelWidth: '120px',
         dialogTableVisible: false,
         dialogFormVisible: false,
+        dialogDetailVisible: false,
         operationWid: 220,
         statusOpts: [{
             value: 1,
@@ -261,7 +390,62 @@
             headname: '订单状态',
             width: ''
           },
-        }
+        },
+        detailMap: {
+          member_id: '客户id',
+          factory_id: '门店id',
+          order_no: '单号',
+          member_name: '客户名称',
+          member_phone: '客户手机号',
+          receipt_phone: '收货人手机',
+          receipt_name: '收货人名称',
+          receipt_address: '收货人地址',
+          amount: '订单金额',
+          yh: '优惠金额',
+          real_amount: '实际金额',
+          pay_amount: '实付金额',
+          pay_time: '支付时间',
+          add_time: '下单时间',
+          status_desc: '订单状态',
+          can_send: '是否可发货',
+          order_type_name: '订单类型',
+          goods: {
+            text: '商品详情',
+            goods_image: '商品图片',
+            option_name: '商品规格',
+            goods_name: '商品名称',
+            num: '数量',
+            price: '单价',
+          },
+          order_fund_assign: {
+            text: '订单金额分配',
+            amount: '金额',
+            to_object_id: '分配对象ID',
+            to_object_type_name: '分配对象类型名称',
+            to_object_name: '分配对象名称',
+            assign_type: '类型',
+            remark: '备注',
+          }
+        },
+        detailData: {},
+        detailStatusMap: {
+          '-1': '预付订单',
+          1: '待付款',
+          2: '已付款',
+          3: '已发货',
+          4: '已完成',
+          5: '已关闭'
+        },
+        detailCan_sendMap: {
+          true: '可以发货',
+          false: '不可'
+        },
+        detialAssigntypeMap: {
+          fee: '费用',
+          business: '营业额',
+          commission: '推广提成',
+        },
+        
       }
 
     },
@@ -279,6 +463,15 @@
     mounted() {},
 
     methods: {
+      showDia(data) {
+        // this.dialogDetailVisible = true
+        // api.pc_order_detail({
+        //   order_no: data.order_no
+        // }).then((res) => {
+        //   this.detailData = res.data
+        // })
+        this.$router.push(`/order-manage/detail?order_no=${data.order_no}`)
+      },
       sendGoods(data) {
         api.order_send({
           order_no: data.order_no
